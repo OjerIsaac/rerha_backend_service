@@ -6,9 +6,10 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header('Content-Type: application/json');
 
 require_once "./classes/classes.php";
-require_once "./vendor/autoload.php";
 
 use \Firebase\JWT\JWT;
+
+require 'Firebase-JWT/src/JWT.php';
 
 $user = new User();
 
@@ -33,7 +34,23 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 $login = $user->loginUser($_POST['email'], $_POST['password']);
                 if ($login) {
                     // jwt token
-                    
+                    $secretKey = "secret";
+                    $issuer = "your_domain";
+                    $audience = "your_audience";
+                    $issuedAt = time();
+                    $notBefore = $issuedAt + 10;
+                    $expirationTime = $issuedAt + 60 * 60 * 24;
+                    $payload = [
+                        "iss" => $issuer,
+                        "aud" => $audience,
+                        "iat" => $issuedAt,
+                        "nbf" => $notBefore,
+                        "exp" => $expirationTime,
+                        "data" => [
+                            "email" => $_POST['email']
+                        ]
+                    ];
+                    $jwt = JWT::encode($payload, $secretKey, "HS256");
                 
                     echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'User login successful', 'token' => $jwt, 'email' => $_POST['email'])));
                 } else {
