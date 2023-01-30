@@ -5,6 +5,10 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header('Content-Type: application/json');
 
+// Load DotEnvironment Class
+require_once('./classes/env.class.php');
+$__DotEnvironment = new DotEnvironment(realpath("./.env"));
+
 require_once "./classes/classes.php";
 
 use \Firebase\JWT\JWT;
@@ -34,12 +38,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 $login = $user->loginUser($_POST['email'], $_POST['password']);
                 if ($login) {
                     // jwt token
-                    $secretKey = "secret";
-                    $issuer = "your_domain";
-                    $audience = "your_audience";
+                    $secretKey = $_ENV['JWT_KEY'];
+                    $issuer = $_ENV['DOMAIN'];
+                    $audience = $_ENV['AUDIENCE'];
                     $issuedAt = time();
                     $notBefore = $issuedAt + 10;
-                    $expirationTime = $issuedAt + 60 * 60 * 24;
+                    $expirationTime = $issuedAt + 60 * 60 * 24; // set to 24 hours
                     $payload = [
                         "iss" => $issuer,
                         "aud" => $audience,
