@@ -49,20 +49,21 @@ switch ($_SERVER['REQUEST_METHOD']) {
             try {
                 $decoded = JWT::decode($jwt, new Key($_ENV['KEY'], 'HS256'));
                 // echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid', 'token' => $decoded)));
+
+                // Check if the token has expired
+                if ($decoded->exp < time()) {
+                    echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
+                    exit();
+                }
+                else {
+                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'User login successful')));
+                }
+
                 exit();
             } catch (Exception $e) {
                 error_log($e->getMessage());
                 echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid Token')));
                 exit();
-            }
-
-            // Check if the token has expired
-            if ($decoded->exp < time()) {
-                echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
-                exit();
-            }
-            else {
-                echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'User login successful')));
             }
         }
         break;
