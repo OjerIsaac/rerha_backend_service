@@ -51,10 +51,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
             }
             else {
                 // fetch files
-                $fetchImages = $user->fetchAllImages();
+                $images = $user->fetchAllImages();
 
-                if ($fetcImages) {
-                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Images fetched successfully')));
+                if ($images) {
+                    $imageData = [];
+                    foreach ($images as $image) {
+                        $imageData[] = $image;
+                    }
+                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Images fetched successfully', 'images' => $imageData)));
                 } else {
                     echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'No image found')));
                     exit();
