@@ -2,7 +2,7 @@
 
 // Load DotEnvironment Class
 require_once 'env.class.php';
-$__DotEnvironment = new DotEnvironment(realpath("../.env"));
+$__DotEnvironment = new DotEnvironment(realpath("./.env"));
 
 class Database
 {
