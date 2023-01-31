@@ -28,49 +28,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        // Handle upload
-        if (empty($_POST)) {
-            echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No data received')));
+        // Verify token
+        $jwt = $_SERVER["HTTP_AUTHORIZATION"];
+
+        if (!$jwt) {
+            echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Unauthorized access')));
             exit();
         }
-        else {
-            // Verify token
-            $jwt = $_SERVER["HTTP_AUTHORIZATION"];
 
-            if (!$jwt) {
-                echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Unauthorized access')));
+        // Strip "Bearer " from the token
+        $jwt = str_replace("Bearer ", "", $jwt);
+
+        // Decode the token
+        try {
+            $decoded = JWT::decode($jwt, new Key($_ENV['KEY'], 'HS256'));
+            // echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid', 'token' => $decoded)));
+
+            // Check if the token has expired
+            if ($decoded->exp < time()) {
+                echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
                 exit();
             }
+            else {
+                // fetch files
+                $fetchImages = $user->fetchAllImages();
 
-            // Strip "Bearer " from the token
-            $jwt = str_replace("Bearer ", "", $jwt);
-
-            // Decode the token
-            try {
-                $decoded = JWT::decode($jwt, new Key($_ENV['KEY'], 'HS256'));
-                // echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid', 'token' => $decoded)));
-
-                // Check if the token has expired
-                if ($decoded->exp < time()) {
-                    echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
+                if ($fetcImages) {
+                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Images fetched successfully')));
+                } else {
+                    echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'No image found')));
                     exit();
                 }
-                else {
-                    // fetch files
-                    $fetchImages = $user->fetchAllImages();
-
-                    if ($fetcImages) {
-                        echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Images fetched successfully')));
-                    } else {
-                        echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'An error occurred')));
-                        exit();
-                    }
-                }
-            } catch (Exception $e) {
-                error_log($e->getMessage());
-                echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid Token')));
-                exit();
             }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid Token')));
+            exit();
         }
         break;
     case 'POST':
