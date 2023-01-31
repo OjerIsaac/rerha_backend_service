@@ -38,22 +38,29 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 $login = $user->loginUser($_POST['email'], $_POST['password']);
                 if ($login) {
                     // jwt token
-                    $secretKey = $_ENV['JWT_KEY'];
+                    $secretKey = $_ENV['KEY'];
                     $issuer = $_ENV['DOMAIN'];
                     $audience = $_ENV['AUDIENCE'];
                     $issuedAt = time();
                     $notBefore = $issuedAt + 10;
-                    $expirationTime = $issuedAt + 60 * 60 * 24; // set to 24 hours
+                    $expirationTime = $issuedAt + 60 * 60 * 24; // set to 24 hr
+                    // $expirationTime = $issuedAt + 60; // set to 1 minute
                     $payload = [
                         "iss" => $issuer,
                         "aud" => $audience,
                         "iat" => $issuedAt,
-                        "nbf" => $notBefore,
+                        // "nbf" => $notBefore,
                         "exp" => $expirationTime,
-                        "data" => [
-                            "email" => $_POST['email']
-                        ]
+                        // "data" => [
+                        //     "email" => $_POST['email']
+                        // ]
                     ];
+                    // $headers = json_encode([
+                    //     "alg" => "HS256",
+                    //     "typ" => "JWT",
+                    //     "kid" => $_ENV['SECRET']
+                    // ]);
+                    
                     $jwt = JWT::encode($payload, $secretKey, "HS256");
                 
                     echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'User login successful', 'token' => $jwt, 'email' => $_POST['email'])));
