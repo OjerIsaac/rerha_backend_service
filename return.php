@@ -6,7 +6,7 @@ header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header('Content-Type: application/json');
 
 // Load DotEnvironment Class
-require_once('./classes/env.class.php');
+require_once './classes/env.class.php';
 $__DotEnvironment = new DotEnvironment(realpath("./.env"));
 
 require_once "./classes/classes.php";
