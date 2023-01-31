@@ -60,4 +60,47 @@ class User
     }
   }
 
+  public function validateImage($file)
+  {
+    $result = true;
+    $part = explode(".", $file);
+    $extension = end($part);
+
+    switch (strtolower($extension)) {
+      case 'jpg':
+      case 'gif':
+      case 'png':
+      case 'jpeg':
+
+      return $result;
+    }
+    $result = false;
+
+    return $result;
+  }
+
+  public function uploadImage($tmp_name)
+  {
+    if ($tmp_name) {
+      $file = $tmp_name;
+      $image_name = time().uniqid(). ".jpg";
+      $path = "uploads/".$image_name;
+  
+      if (move_uploaded_file($file, $path)) {
+        return $path;
+      }
+    }
+  }
+
+  public function finalUpload($file, $name, $design_id, $top, $left, $width, $border_raduis_top_right, $border_raduis_top_left, $border_raduis_bottom_right, $border_raduis_bottom_left, $height, $border_color, $name_top, $name_left, $font_size, $font_weight, $font_color)
+  {
+    $sql = "INSERT INTO uploads (file_name, name, design_id, top, left_side, width, border_raduis_top_right, border_raduis_top_left, border_raduis_bottom_right, border_raduis_bottom_left, height, border_color, name_top, name_left, font_size, font_weight, font_color)" . "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+    $stmt = $this->db->prepare($sql);
+
+    $stmt->execute([$file, $name, $design_id, $top, $left, $width, $border_raduis_top_right, $border_raduis_top_left, $border_raduis_bottom_right, $border_raduis_bottom_left, $height, $border_color, $name_top, $name_left, $font_size, $font_weight, $font_color]);
+
+    return true;
+  }
+
 }
