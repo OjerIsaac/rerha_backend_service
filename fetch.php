@@ -3,7 +3,7 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
-header("Content-Type: application/json; charset=UTF-8");
+header("Content-Type: application/json");
 
 // Load DotEnvironment Class
 require_once './classes/env.class.php';
@@ -57,6 +57,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 }
                 else {
                     // fetch files
+                    $fetchImages = $user->fetchAllImages();
+
+                    if ($fetcImages) {
+                        echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Images fetched successfully')));
+                    } else {
+                        echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'An error occurred')));
+                        exit();
+                    }
                 }
             } catch (Exception $e) {
                 error_log($e->getMessage());
