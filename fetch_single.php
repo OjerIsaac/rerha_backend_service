@@ -51,8 +51,19 @@ switch ($_SERVER['REQUEST_METHOD']) {
             }
             else {
                 $id = $_GET['design_id'];
-                echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => $id)));
-                
+                // fetch single files
+                $images = $user->fetchOneImage($id);
+
+                if ($images) {
+                    $imageData = [];
+                    foreach ($images as $image) {
+                        $imageData[] = $image;
+                    }
+                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Image fetched successfully', 'image' => $imageData)));
+                } else {
+                    echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'No image found')));
+                    exit();
+                }
             }
         } catch (Exception $e) {
             error_log($e->getMessage());

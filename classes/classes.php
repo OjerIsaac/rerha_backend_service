@@ -116,11 +116,11 @@ class User
     }
   }
 
-  public function fetchOneImage()
+  public function fetchOneImage($id)
   {
-    $sql = "SELECT * FROM uploads";
+    $sql = "SELECT * FROM uploads WHERE design_id = ?";
     $stmt = $this->db->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([$id]);
 
     $count_row = $stmt->rowCount();
 
