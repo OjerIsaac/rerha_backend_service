@@ -116,4 +116,17 @@ class User
     }
   }
 
+  public function fetchOneImage()
+  {
+    $sql = "SELECT * FROM uploads";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute();
+
+    $count_row = $stmt->rowCount();
+
+    if ($count_row > 0) {
+      return $stmt;
+    }
+  }
+
 }
