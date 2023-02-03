@@ -3,6 +3,7 @@ This is the backend app for Rerha powered by PHP
 
 ## Requirements
 - MySQL Database
+- Live web host eg: [Hostinger](), Namecheap, Domainking
 
 ## Features
 - Completely written in [PHP](https://www.php.net/docs.php)
