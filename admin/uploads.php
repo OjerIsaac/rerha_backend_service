@@ -66,18 +66,25 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     }
 
                     $validateImage = $user->validateImage($_FILES['file_name']['name']);
-                    $uploadImage = $user->uploadImage($_FILES['file_name']['tmp_name']);
 
-                    if ($validateImage && $uploadImage) {
+                    if ($validateImage) {
 
-                        $finalUpload = $user->finalUpload($uploadImage, $_POST['name'], $_POST['design_id'], $_POST['top'], $_POST['left'], $_POST['width'], $_POST['border_raduis_top_right'], $_POST['border_raduis_top_left'], $_POST['border_raduis_bottom_right'], $_POST['border_raduis_bottom_left'], $_POST['height'], $_POST['border_color'], $_POST['name_top'], $_POST['name_left'], $_POST['font_size'], $_POST['font_weight'], $_POST['font_color']);
+                        $uploadImage = $user->uploadImage($_FILES['file_name']['tmp_name']);
 
-                        if ($finalUpload) {
-                            echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Upload successful')));
+                        if ($uploadImage) {
+                            $finalUpload = $user->finalUpload($uploadImage, $_POST['name'], $_POST['design_id'], $_POST['top'], $_POST['left'], $_POST['width'], $_POST['border_raduis_top_right'], $_POST['border_raduis_top_left'], $_POST['border_raduis_bottom_right'], $_POST['border_raduis_bottom_left'], $_POST['height'], $_POST['border_color'], $_POST['name_top'], $_POST['name_left'], $_POST['font_size'], $_POST['font_weight'], $_POST['font_color']);
+
+                            if ($finalUpload) {
+                                echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Upload successful')));
+                            } else {
+                                echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'An error occurred')));
+                                exit();
+                            }
                         } else {
-                            echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'An error occurred')));
+                            echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'An error occurred, could not upload image')));
                             exit();
                         }
+                        
                     } else {
                         echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'Image file type not allowed')));
                         exit();
