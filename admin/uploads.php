@@ -1,25 +1,25 @@
 <?php
 
 // header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Origin: http://localhost:3001");
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Content-Type: application/json; charset=UTF-8");
 
 // Load DotEnvironment Class
-require_once './classes/env.class.php';
+require_once '../classes/env.class.php';
 $__DotEnvironment = new DotEnvironment(realpath("./.env"));
 
-require_once "./classes/classes.php";
+require_once "../classes/classes.php";
 
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
 
-require 'Firebase-JWT/src/JWT.php';
-require 'Firebase-JWT/src/Key.php';
-require 'Firebase-JWT/src/SignatureInvalidException.php';
-require 'Firebase-JWT/src/BeforeValidException.php';
-require 'Firebase-JWT/src/ExpiredException.php';
+require '../Firebase-JWT/src/JWT.php';
+require '../Firebase-JWT/src/Key.php';
+require '../Firebase-JWT/src/SignatureInvalidException.php';
+require '../Firebase-JWT/src/BeforeValidException.php';
+require '../Firebase-JWT/src/ExpiredException.php';
 
 $user = new User();
 
