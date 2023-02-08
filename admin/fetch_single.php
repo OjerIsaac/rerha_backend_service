@@ -49,8 +49,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             if ($decoded->exp < time()) {
                 echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
                 exit();
-            }
-            else {
+            }else {
                 $id = $_GET['design_id'];
                 // fetch single files
                 $images = $user->fetchOneImage($id);

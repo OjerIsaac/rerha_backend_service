@@ -40,8 +40,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
         // Strip "Bearer " from the token
         $jwt = str_replace("Bearer ", "", $jwt);
 
-        // Decode the token
         try {
+            // Decode the token
             $decoded = JWT::decode($jwt, new Key($_ENV['KEY'], 'HS256'));
             // echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid', 'token' => $decoded)));
 
@@ -49,8 +49,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             if ($decoded->exp < time()) {
                 echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
                 exit();
-            }
-            else {
+            }else {
                 // fetch files
                 $images = $user->fetchAllImages();
 
