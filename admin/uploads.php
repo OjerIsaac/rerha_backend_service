@@ -65,7 +65,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         exit();
                     }
 
-                    $validateImage = $user->validateImage($_FILES['file_name']['name']);
+                    $validateImage = $user->validateImage($_FILES['file_name']['name']); // there is a bug here
 
                     if ($validateImage) {
 
@@ -83,14 +83,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         } else {
                             echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'An error occurred, could not upload image')));
                             exit();
-                        }
-                        
+                        } 
                     } else {
                         echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'Image file type not allowed')));
                         exit();
                     }
-                    
-                    // echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => $uploadImage)));
                 }
             } catch (Exception $e) {
                 error_log($e->getMessage());
