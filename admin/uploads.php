@@ -55,8 +55,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 if ($decoded->exp < time()) {
                     echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
                     exit();
-                }
-                else {
+                }else {
                     // handle file upload
 
                     // Check the file size
@@ -65,11 +64,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         exit();
                     }
 
-                    $validateImage = $user->validateImage($_FILES['file_name']['name']); // there is a bug here
+                    $validateImage = $user->validateImage($_FILES['file']['name']); // there is a bug here
 
                     if ($validateImage) {
 
-                        $uploadImage = $user->uploadImage($_FILES['file_name']['tmp_name']);
+                        $uploadImage = $user->uploadImage($_FILES['file']['tmp_name']);
 
                         if ($uploadImage) {
                             $finalUpload = $user->finalUpload($uploadImage, $_POST['name'], $_POST['design_id'], $_POST['top'], $_POST['left'], $_POST['width'], $_POST['border_raduis_top_right'], $_POST['border_raduis_top_left'], $_POST['border_raduis_bottom_right'], $_POST['border_raduis_bottom_left'], $_POST['height'], $_POST['border_color'], $_POST['name_top'], $_POST['name_left'], $_POST['font_size'], $_POST['font_weight'], $_POST['font_color']);
