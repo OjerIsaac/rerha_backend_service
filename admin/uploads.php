@@ -59,7 +59,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     // handle file upload
 
                     // Check the file size
-                    if ($_FILES['file_name']['size'] > 10000000) {
+                    if ($_FILES['name']['size'] > 10000000) {
                         echo json_encode(array('success' => false, 'code' => 400, 'data' => array("error" => "File size is too large. Maximum allowed size is 10 MB.")));
                         exit();
                     }
