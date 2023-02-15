@@ -55,7 +55,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Token has expired')));
                     exit();
                 }else {
-                    // handle file upload
+                    isset($_FILES['file']['name']) ? $image = $_FILES['file']['name'] : $image = null;
 
                     // Check the file size
                     if ($_FILES['file']['size'] > 10000000) {
@@ -63,7 +63,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         exit();
                     }
 
-                    $validateImage = $user->validateImage($_FILES['file']['name']); // there is a bug here
+                    $validateImage = $user->validateImage($image); // there is a bug here
 
                     if ($validateImage) {
 
