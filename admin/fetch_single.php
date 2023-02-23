@@ -24,9 +24,29 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $images = $user->fetchOneImage($id);
 
         if ($images) {
-            $imageData = [];
             foreach ($images as $image) {
-                $imageData[] = $image;
+                $newImageData = array(
+                    "id" => $image["id"],
+                    "file_name" => $image["file_name"],
+                    "name" => $image["name"],
+                    "design_id" => $image["design_id"],
+                    "top" => $image["top"],
+                    "left_side" => $image["left_side"],
+                    "width" => $image["width"],
+                    "border_raduis_top_right" => $image["border_raduis_top_right"],
+                    "border_raduis_top_left" => $image["border_raduis_top_left"],
+                    "border_raduis_bottom_right" => $image["border_raduis_bottom_right"],
+                    "border_raduis_bottom_left" => $image["border_raduis_bottom_left"],
+                    "height" => $image["height"],
+                    "border_color" => $image["border_color"],
+                    "name_top" => $image["name_top"],
+                    "name_left" => $image["name_left"],
+                    "font_size" => $image["font_size"],
+                    "font_weight" => $image["font_weight"],
+                    "font_color" => $image["font_color"],
+                    "date" => $image["date"]
+                );
+                $imageData[] = $newImageData;
             }
             echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Image fetched successfully', 'image' => $imageData)));
         } else {
