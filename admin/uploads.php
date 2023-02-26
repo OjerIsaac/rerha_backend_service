@@ -33,6 +33,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
             echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No data received')));
             exit();
         }
+        elseif ((empty($_POST['name'])) || (empty($_POST['design_id'])) || (empty($_POST['top'])) || (empty($_POST['left'])) || (empty($_POST['width'])) || (empty($_POST['border'])) || (empty($_POST['border_raduis_top_right'])) || (empty($_POST['border_raduis_top_left'])) || (empty($_POST['border_raduis_bottom_right'])) || (empty($_POST['border_raduis_bottom_left'])) || (empty($_POST['height'])) || (empty($_POST['border_color'])) || (empty($_POST['name_top'])) || (empty($_POST['name_left'])) || (empty($_POST['font_size'])) || (empty($_POST['font_weight'])) || (empty($_POST['font_color'])) ) {
+            echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No field can be left empty')));
+        }
         else {
             // Verify token
             $jwt = $_SERVER["HTTP_AUTHORIZATION"];
@@ -70,7 +73,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         $uploadImage = $user->uploadImage($_FILES['file']['tmp_name']);
 
                         if ($uploadImage) {
-                            $finalUpload = $user->finalUpload($uploadImage, $_POST['name'], $_POST['design_id'], $_POST['top'], $_POST['left'], $_POST['width'], $_POST['border_raduis_top_right'], $_POST['border_raduis_top_left'], $_POST['border_raduis_bottom_right'], $_POST['border_raduis_bottom_left'], $_POST['height'], $_POST['border_color'], $_POST['name_top'], $_POST['name_left'], $_POST['font_size'], $_POST['font_weight'], $_POST['font_color']);
+                            $finalUpload = $user->finalUpload($uploadImage, $_POST['name'], $_POST['design_id'], $_POST['top'], $_POST['left'], $_POST['width'], $_POST['border'], $_POST['border_raduis_top_right'], $_POST['border_raduis_top_left'], $_POST['border_raduis_bottom_right'], $_POST['border_raduis_bottom_left'], $_POST['height'], $_POST['border_color'], $_POST['name_top'], $_POST['name_left'], $_POST['font_size'], $_POST['font_weight'], $_POST['font_color']);
 
                             if ($finalUpload) {
                                 echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Upload successful')));

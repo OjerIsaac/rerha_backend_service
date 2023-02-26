@@ -33,6 +33,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     "top" => $image["top"],
                     "left_side" => $image["left_side"],
                     "width" => $image["width"],
+                    "border" => $image["border"],
                     "border_raduis_top_right" => $image["border_raduis_top_right"],
                     "border_raduis_top_left" => $image["border_raduis_top_left"],
                     "border_raduis_bottom_right" => $image["border_raduis_bottom_right"],
