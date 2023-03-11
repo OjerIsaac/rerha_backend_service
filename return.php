@@ -26,19 +26,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-        // Handle login
-        if (empty($_POST)) {
-            echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No data received')));
+        $required_fields = array('email', 'password');
+        $empty_fields = array();
+
+        foreach ($required_fields as $field) {
+            if (empty($_REQUEST[$field])) {
+                $empty_fields[] = $field;
+            }
+        }
+        if (!empty($empty_fields)) {
+            echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'This fields '.implode(', ', $empty_fields).' cannot be empty'  )));
             exit();
-        }
-        elseif ((empty($_POST['email'])) || (empty($_POST['password'])) ) {
-            echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No field can be left empty')));
-        }
-        else {
+        } else {
             // check if admin exists
-            $adminExist = $user->adminExist($_POST['email']);
+            $adminExist = $user->adminExist($_REQUEST['email']);
             if ($adminExist) {
-                $login = $user->loginUser($_POST['email'], $_POST['password']);
+                $login = $user->loginUser($_REQUEST['email'], $_REQUEST['password']);
                 if ($login) {
                     // jwt token
                     $secretKey = $_ENV['KEY'];
@@ -54,19 +57,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         "iat" => $issuedAt,
                         // "nbf" => $notBefore,
                         "exp" => $expirationTime,
-                        // "data" => [
-                        //     "email" => $_POST['email']
-                        // ]
                     ];
-                    // $headers = json_encode([
-                    //     "alg" => "HS256",
-                    //     "typ" => "JWT",
-                    //     "kid" => $_ENV['SECRET']
-                    // ]);
                     
                     $jwt = JWT::encode($payload, $secretKey, "HS256");
                 
-                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'User login successful', 'token' => $jwt, 'email' => $_POST['email'])));
+                    echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'User login successful', 'token' => $jwt, 'email' => $_REQUEST['email'])));
                 } else {
                     echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'Wrong password')));
                 } 
