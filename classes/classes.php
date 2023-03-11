@@ -22,6 +22,25 @@ class User
   }
 
   /**
+   * @return string
+   */
+  public function generate_uuid()
+  {
+    $uuid = sprintf(
+      '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0x0fff) | 0x4000,
+      mt_rand(0, 0x3fff) | 0x8000,
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0xffff),
+      mt_rand(0, 0xffff)
+    );
+    return $uuid;
+  }
+
+  /**
    * @param mixed $email
    * @return bool
    */
@@ -179,6 +198,24 @@ class User
     if ($count_row > 0) {
       return $stmt;
     }
+  }
+
+  /**
+   * @param mixed $user_uuid
+   * @param mixed $uploadImage
+   * @param mixed $name
+   * @param mixed $design_id
+   * @return true
+   */
+  public function userUpload($user_uuid, $uploadImage, $name, $design_id)
+  {
+    $sql = "INSERT INTO user_uploads (user_uuid, design_id, name, image)" . "VALUES (?,?,?,?)";
+
+    $stmt = $this->db->prepare($sql);
+
+    $stmt->execute([$user_uuid, $design_id, $name, $uploadImage,]);
+
+    return true;
   }
 
 }
