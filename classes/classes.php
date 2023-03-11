@@ -218,4 +218,21 @@ class User
     return true;
   }
 
+  /**
+   * @param mixed $id
+   * @return \PDOStatement|false|void
+   */
+  public function fetchUserImage($id)
+  {
+    $sql = "SELECT * FROM user_uploads WHERE user_uuid = ?";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$id]);
+
+    $count_row = $stmt->rowCount();
+
+    if ($count_row > 0) {
+      return $stmt;
+    }
+  }
+
 }
