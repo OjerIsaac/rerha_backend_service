@@ -31,15 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-        // Handle upload
-        if (empty($_POST)) {
-            echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No data received')));
+        $required_fields = array('name', 'design_id', 'top', 'left', 'width', 'border', 'border_raduis_top_right', 'border_raduis_top_left', 'border_raduis_bottom_right', 'border_raduis_bottom_left', 'height', 'border_color', 'name_top', 'name_left', 'font_size', 'font_weight', 'font_color');
+        $empty_fields = array();
+
+        foreach ($required_fields as $field) {
+            if (empty($_REQUEST[$field])) {
+                $empty_fields[] = $field;
+            }
+        }
+        if (!empty($empty_fields)) {
+            echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'This fields '.implode(', ', $empty_fields).' cannot be empty'  )));
             exit();
-        }
-        elseif ((empty($_POST['name'])) || (empty($_POST['design_id'])) || (empty($_POST['top'])) || (empty($_POST['left'])) || (empty($_POST['width'])) || (empty($_POST['border'])) || (empty($_POST['border_raduis_top_right'])) || (empty($_POST['border_raduis_top_left'])) || (empty($_POST['border_raduis_bottom_right'])) || (empty($_POST['border_raduis_bottom_left'])) || (empty($_POST['height'])) || (empty($_POST['border_color'])) || (empty($_POST['name_top'])) || (empty($_POST['name_left'])) || (empty($_POST['font_size'])) || (empty($_POST['font_weight'])) || (empty($_POST['font_color'])) ) {
-            echo json_encode(array('success' => false, 'code' => 404, 'data' => array('message' => 'No field can be left empty')));
-        }
-        else {
+        } else {
             // Verify token
             $jwt = $_SERVER["HTTP_AUTHORIZATION"];
 
@@ -54,7 +57,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
             try {
                 // Decode the token
                 $decoded = JWT::decode($jwt, new Key($_ENV['KEY'], 'HS256'));
-                // echo json_encode(array('success' => false, 'code' => 401, 'data' => array('message' => 'Invalid', 'token' => $decoded)));
 
                 // Check if the token has expired
                 if ($decoded->exp < time()) {
@@ -69,14 +71,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         exit();
                     }
 
-                    $validateImage = $user->validateImage($image); // there is a bug here
+                    $validateImage = $user->validateImage($image); //TODO: there is a bug here
 
                     if ($validateImage) {
 
                         $uploadImage = $user->uploadImage($_FILES['file']['tmp_name']);
 
                         if ($uploadImage) {
-                            $finalUpload = $user->finalUpload($uploadImage, $_POST['name'], $_POST['design_id'], $_POST['top'], $_POST['left'], $_POST['width'], $_POST['border'], $_POST['border_raduis_top_right'], $_POST['border_raduis_top_left'], $_POST['border_raduis_bottom_right'], $_POST['border_raduis_bottom_left'], $_POST['height'], $_POST['border_color'], $_POST['name_top'], $_POST['name_left'], $_POST['font_size'], $_POST['font_weight'], $_POST['font_color']);
+                            $finalUpload = $user->finalUpload($uploadImage, $_REQUEST['name'], $_REQUEST['design_id'], $_REQUEST['top'], $_REQUEST['left'], $_REQUEST['width'], $_REQUEST['border'], $_REQUEST['border_raduis_top_right'], $_REQUEST['border_raduis_top_left'], $_REQUEST['border_raduis_bottom_right'], $_REQUEST['border_raduis_bottom_left'], $_REQUEST['height'], $_REQUEST['border_color'], $_REQUEST['name_top'], $_REQUEST['name_left'], $_REQUEST['font_size'], $_REQUEST['font_weight'], $_REQUEST['font_color']);
 
                             if ($finalUpload) {
                                 echo json_encode(array('success' => true, 'code' => 200, 'data' => array('message' => 'Upload successful')));
