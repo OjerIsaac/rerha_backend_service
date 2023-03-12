@@ -44,7 +44,7 @@ class User
    * @param mixed $email
    * @return bool
    */
-  public function adminExist($email)
+  public function emailExist($email)
   {
     $query = "SELECT id from users WHERE email = ?";
 

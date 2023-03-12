@@ -39,9 +39,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
             exit();
         } else {
             // check if admin exists
-            $adminExist = $user->emailExist($_REQUEST['email']);
-            if ($adminExist) {
+            $userExist = $user->emailExist($_REQUEST['email']);
+            if ($userExist) {
                 $login = $user->loginUser($_REQUEST['email'], $_REQUEST['password']);
+                $user_uuid = $user->getUserDetails($_REQUEST['email'])->fetch()['user_uuid'];
                 if ($login) {
                     // jwt token
                     $secretKey = $_ENV['KEY'];
@@ -57,6 +58,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                         "iat" => $issuedAt,
                         // "nbf" => $notBefore,
                         "exp" => $expirationTime,
+                        "id" => $user_uuid
                     ];
                     
                     $jwt = JWT::encode($payload, $secretKey, "HS256");
@@ -66,7 +68,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                     echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'Wrong password')));
                 } 
             } else {
-                echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'Invalid admin email')));
+                echo json_encode(array('success' => false, 'code' => 400, 'data' => array('message' => 'User doesn\'t exist')));
             }
         }
         break;
