@@ -60,6 +60,23 @@ class User
   }
 
   /**
+   * @param mixed $user_uuid
+   * @param mixed $name
+   * @param mixed $email
+   * @param mixed $password
+   * @return true
+   */
+  public function registerUser($user_uuid, $name, $email, $password)
+  {
+    $query = "INSERT INTO users (user_uuid, name, email, password, role, created_at, updated_at)" . "VALUES (?,?,?,?,?,?,?)";
+
+    $stmt = $this->db->prepare($query);
+    $stmt->execute([$user_uuid, $name, $email, password_hash($password, PASSWORD_BCRYPT), 'MANAGER', date('Y-m-d H:i:s'), null]);
+
+    return true;
+  }
+
+  /**
    * @param mixed $username
    * @param mixed $password
    * @return bool
