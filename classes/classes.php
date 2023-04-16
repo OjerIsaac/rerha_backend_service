@@ -70,11 +70,7 @@ class User
     }
   }
 
-  /**
-   * @param mixed $username
-   * @return \PDOStatement|false|void
-   */
-  public function getUserDetails($username)
+  public function getUserDetails(string $username): PDOStatement
   {
     $query = "SELECT * from users WHERE email= ?";
 
@@ -88,11 +84,7 @@ class User
     }
   }
 
-  /**
-   * @param mixed $file
-   * @return bool
-   */
-  public function validateImage($file)
+  public function validateImage($file): bool
   {
     $result = true;
     $part = explode(".", $file);
@@ -111,11 +103,7 @@ class User
     return $result;
   }
 
-  /**
-   * @param mixed $tmp_name
-   * @return string|void
-   */
-  public function uploadImage($tmp_name)
+  public function uploadImage($tmp_name): string
   {
     if ($tmp_name) {
       $file = $tmp_name;
@@ -128,28 +116,7 @@ class User
     }
   }
 
-  /**
-   * @param mixed $file
-   * @param mixed $name
-   * @param mixed $design_id
-   * @param mixed $top
-   * @param mixed $left
-   * @param mixed $width
-   * @param mixed $border
-   * @param mixed $border_raduis_top_right
-   * @param mixed $border_raduis_top_left
-   * @param mixed $border_raduis_bottom_right
-   * @param mixed $border_raduis_bottom_left
-   * @param mixed $height
-   * @param mixed $border_color
-   * @param mixed $name_top
-   * @param mixed $name_left
-   * @param mixed $font_size
-   * @param mixed $font_weight
-   * @param mixed $font_color
-   * @return true
-   */
-  public function finalUpload($file, $name, $design_id, $top, $left, $width, $border, $border_raduis_top_right, $border_raduis_top_left, $border_raduis_bottom_right, $border_raduis_bottom_left, $height, $border_color, $name_top, $name_left, $font_size, $font_weight, $font_color)
+  public function finalUpload(string $file, string $name, string $design_id, string $top, string $left, string $width, string $border, string $border_raduis_top_right, string $border_raduis_top_left, string $border_raduis_bottom_right, string $border_raduis_bottom_left, string $height, string $border_color, string $name_top, string $name_left, string $font_size, string $font_weight, string $font_color): bool
   {
     $sql = "INSERT INTO uploads (file_name, name, design_id, top, left_side, width, border, border_raduis_top_right, border_raduis_top_left, border_raduis_bottom_right, border_raduis_bottom_left, height, border_color, name_top, name_left, font_size, font_weight, font_color, date)" . "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -160,10 +127,7 @@ class User
     return true;
   }
 
-  /**
-   * @return \PDOStatement|false|void
-   */
-  public function fetchAllImages()
+  public function fetchAllImages(): PDOStatement
   {
     $sql = "SELECT * FROM uploads";
     $stmt = $this->db->prepare($sql);
@@ -176,11 +140,7 @@ class User
     }
   }
 
-  /**
-   * @param mixed $id
-   * @return \PDOStatement|false|void
-   */
-  public function fetchOneImage($id)
+  public function fetchOneImage(string $id): PDOStatement
   {
     $sql = "SELECT * FROM uploads WHERE design_id = ?";
     $stmt = $this->db->prepare($sql);
@@ -193,14 +153,7 @@ class User
     }
   }
 
-  /**
-   * @param mixed $user_uuid
-   * @param mixed $uploadImage
-   * @param mixed $name
-   * @param mixed $design_id
-   * @return true
-   */
-  public function userUpload($user_uuid, $uploadImage, $name, $design_id)
+  public function userUpload(string $user_uuid, string $uploadImage, string $name, string $design_id): bool
   {
     $sql = "INSERT INTO user_uploads (user_uuid, design_id, name, image)" . "VALUES (?,?,?,?)";
 
@@ -211,11 +164,7 @@ class User
     return true;
   }
 
-  /**
-   * @param mixed $id
-   * @return \PDOStatement|false|void
-   */
-  public function fetchUserImage($id)
+  public function fetchUserImage(string $id): PDOStatement
   {
     $sql = "SELECT * FROM user_uploads WHERE user_uuid = ?";
     $stmt = $this->db->prepare($sql);
@@ -227,5 +176,10 @@ class User
       return $stmt;
     }
   }
+
+}
+
+class Auth
+{
 
 }
