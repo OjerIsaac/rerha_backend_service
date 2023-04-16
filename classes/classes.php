@@ -5,26 +5,18 @@ require_once "db.config.php";
 //reset the timezone default
 date_default_timezone_set('Africa/Lagos');
 
-session_start();
-
 class User
 {
 
   protected $db;
 
-  /**
-   * @return void
-   */
   public function __construct()
   {
     $this->db = new Database();
     $this->db = $this->db->connect();
   }
 
-  /**
-   * @return string
-   */
-  public function generate_uuid()
+  public function generate_uuid(): string
   {
     $uuid = sprintf(
       '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -40,11 +32,7 @@ class User
     return $uuid;
   }
 
-  /**
-   * @param mixed $email
-   * @return bool
-   */
-  public function emailExist($email)
+  public function emailExist(string $email): bool
   {
     $query = "SELECT id from users WHERE email = ?";
 
@@ -59,14 +47,7 @@ class User
     }
   }
 
-  /**
-   * @param mixed $user_uuid
-   * @param mixed $name
-   * @param mixed $email
-   * @param mixed $password
-   * @return true
-   */
-  public function registerUser($user_uuid, $name, $email, $password)
+  public function registerUser(string $user_uuid, string $name, string $email, string $password): bool
   {
     $query = "INSERT INTO users (user_uuid, name, email, password, role, created_at, updated_at)" . "VALUES (?,?,?,?,?,?,?)";
 
@@ -76,12 +57,7 @@ class User
     return true;
   }
 
-  /**
-   * @param mixed $username
-   * @param mixed $password
-   * @return bool
-   */
-  public function loginUser($username, $password)
+  public function loginUser(string $username, string $password): bool
   {
     $rows = $this->getUserDetails($username)->fetch(PDO::FETCH_ASSOC);
     // print_r($rows);
