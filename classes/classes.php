@@ -1,9 +1,21 @@
 <?php
 
 require_once "db.config.php";
+require_once 'env.class.php';
+
+$__DotEnvironment = new DotEnvironment(realpath("./.env"));
 
 //reset the timezone default
 date_default_timezone_set('Africa/Lagos');
+
+require_once __DIR__ . '/../Firebase-JWT/src/JWT.php';
+require_once __DIR__ . '/../Firebase-JWT/src/Key.php';
+require_once __DIR__ . '/../Firebase-JWT/src/SignatureInvalidException.php';
+require_once __DIR__ . '/../Firebase-JWT/src/BeforeValidException.php';
+require_once __DIR__ . '/../Firebase-JWT/src/ExpiredException.php';
+
+use Firebase\JWT\JWT as FirebaseJWT;
+use Firebase\JWT\Key as FirebaseKey;
 
 class User
 {
@@ -65,7 +77,7 @@ class User
 
     if (password_verify($password, $rows['password'])) {
       return true;
-    }else {
+    } else {
       return false;
     }
   }
@@ -96,7 +108,7 @@ class User
       case 'png':
       case 'jpeg':
 
-      return $result;
+        return $result;
     }
     $result = false;
 
@@ -107,9 +119,9 @@ class User
   {
     if ($tmp_name) {
       $file = $tmp_name;
-      $image_name = time().uniqid(). ".jpg";
-      $path = "uploads/".$image_name;
-  
+      $image_name = time() . uniqid() . ".jpg";
+      $path = "uploads/" . $image_name;
+
       if (move_uploaded_file($file, $path)) {
         return $path;
       }
@@ -176,10 +188,59 @@ class User
       return $stmt;
     }
   }
-
 }
 
 class Auth
 {
+  public function generateJwtToken(string $user_uuid): string
+  {
+    $secretKey = $_ENV['KEY'];
+    $issuer = $_ENV['DOMAIN'];
+    $audience = $_ENV['AUDIENCE'];
+    $issuedAt = time();
+    // $notBefore = $issuedAt + 10;
+    $expirationTime = $issuedAt + 3600; // Set expiration time to 1 hour after the issued time
+    // $expirationTime = $issuedAt + 60; // set to 1 minute
+    $payload = [
+      "iss" => $issuer,
+      "aud" => $audience,
+      "iat" => $issuedAt,
+      // "nbf" => $notBefore,
+      "exp" => $expirationTime,
+      "id" => $user_uuid
+    ];
 
+    $jwt = FirebaseJWT::encode($payload, $secretKey, "HS256");
+    return $jwt;
+  }
+
+  // TODO: suitable data type for $server
+  public function verifyTokenAndGetUserId($server): array
+  {
+    // Verify token
+    $jwt = $server;
+
+    if (!$jwt) {
+      return array('id' => null, 'error' => 'Unauthorized access');
+    }
+
+    // Strip "Bearer " from the token
+    $jwt = str_replace("Bearer ", "", $jwt);
+
+    try {
+      // Decode the token
+      $decoded = FirebaseJWT::decode($jwt, new FirebaseKey($_ENV['KEY'], 'HS256'));
+      $user_id = $decoded->id;
+
+      // Check if the token has expired
+      if ($decoded->exp < time()) {
+        return array('id' => null, 'error' => 'Token has expired');
+      } else {
+        return array('id' => $user_id, 'error' => null);
+      }
+    } catch (\Throwable $e) {
+      error_log($e->getMessage());
+      return array('id' => null, 'error' => 'Invalid Token');
+    }
+  }
 }

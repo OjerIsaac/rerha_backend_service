@@ -7,10 +7,6 @@ header('Content-Type: application/json');
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Max-Age: 86400");
 
-// Load DotEnvironment Class
-require_once '../classes/env.class.php';
-$__DotEnvironment = new DotEnvironment(realpath("./.env"));
-
 require_once "../classes/classes.php";
 
 $user = new User();
